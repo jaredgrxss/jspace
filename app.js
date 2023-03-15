@@ -5,6 +5,7 @@ const bodyparser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoSessionStorage = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 const flash = require('connect-flash');
 
 MONGODB_URI = 'mongodb+srv://jaredgrxss:jared1939@seniorprojectdb.kfltxc7.mongodb.net/market?retryWrites=true&w=majority'
@@ -14,6 +15,7 @@ const store = new MongoSessionStorage({
     collection: 'sessions'
 });
 
+const csrfProtection = csrf();
 
 //templating engine setup
 app.set('view engine', 'ejs');
@@ -33,11 +35,13 @@ app.use(express.static(path.join(__dirname,'public')));
 
 //session middle-ware
 app.use(session({secret: 'CSCI487SENIORPROJECTSECRETKEY', resave: false, saveUninitialized: false, store: store}));
+app.use(csrfProtection);
 app.use(flash());
 
 //local variables for sessions
 app.use((req, res, next) => {
     res.locals.isAuth = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
     next();
 })
 
@@ -55,4 +59,6 @@ mongoose.connect(MONGODB_URI)
 .then(result => {
     app.listen(8000);
 })
-.catch(err => console.log(err));
+.catch(err => {
+    console.log(err)
+});

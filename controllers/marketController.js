@@ -1,4 +1,6 @@
 exports.getIndex = (req,res,next) => {
-
-    res.render('index');
+    context = {
+        page: 'Homepage',
+    }
+    res.render('index',context);
 }

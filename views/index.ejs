@@ -2,6 +2,7 @@
 
 <body>
     <%- include('./includes/navbar.ejs') %>
+    <% if (!isAuth) { %>
     <div class="intro">
         <h1 class="logo-header">
             <span class="logo">Shopping</span>
@@ -9,6 +10,18 @@
             <span class="logo">Simple</span>
         </h1>
     </div>
+    <% } %>
+
+    
+    <div class="main-text-slogan">
+        <h1 class="main-text">We make shopping simple...</h1>
+        <h2 class="main-slogan">seriously, simple</h2>
+        <a href="/login"><button class="main-text-button">Get Started</button></a>
+    </div>
+    
+    
+    
+
   
 </body>
 

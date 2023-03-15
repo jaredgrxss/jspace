@@ -1,3 +1,4 @@
+// Nav bar functionality 
 const hamburger = document.querySelector('.hamburger');
 const hamburger_icon = hamburger.querySelector('span');
 const mobile_menu = document.querySelector('.mobile-menu');
@@ -10,6 +11,7 @@ hamburger.addEventListener('click', () => {
 	mobile_menu.classList.toggle('is-open');
 });
 
+//Splash page intro
 let intro = document.querySelector('.intro');
 let logo = document.querySelector('.logo-header');
 let logoSpan = document.querySelectorAll('.logo');
@@ -35,4 +37,5 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         intro.style.top = '-100vh';
     }, 2300);
-})
+});
+
