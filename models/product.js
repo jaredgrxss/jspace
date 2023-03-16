@@ -21,7 +21,12 @@ const productSchema = new Schema({
     UID: {
         type: Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true,
+    },
+
+    isApproved: {
+        type: Boolean,
+        required: true,
     }
 });
 

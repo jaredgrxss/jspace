@@ -1,0 +1,36 @@
+<%- include('./includes/header.ejs') %>
+
+<body>
+    <%- include('./includes/navbar.ejs') %>
+    <% if (allProds) { %>
+        <div class="collection">
+ 
+            <% for(let prod of allProds) { %>
+            <div class="product">
+              <a class="product__image" href="#"></a>
+              <div class="product__name">
+                <p>
+                  <a href="#"><%= prod.name %></a>
+                </p>
+              </div>
+              <div class="product__price">
+                <p>$<%= prod.price %></p>
+              </div>
+              <a href="/product-detail/<%= prod._id %>">
+                <button class="approve-button">Details</button>
+              </a>
+              <form method="POST" action="/add-to-cart/<%= prod._id %>">
+                <button class="deny-button" type="submit">Add to Cart</button>
+                <input type="hidden" name="productId" value="<%= prod._id %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              </form>
+            </div>
+        <% } %>
+            
+        </div>
+    <% } else { %>
+        <h1 class="approve-products-error">Currently, there are no products up for sale!</h1>
+    <% } %>
+</body>
+
+<%- include('./includes/end.ejs') %>

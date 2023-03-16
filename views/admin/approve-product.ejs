@@ -1,0 +1,39 @@
+<%- include('../includes/header.ejs') %>
+
+<body>
+    <%- include('../includes/navbar.ejs') %>
+    <% if (allProds) { %>
+        <div class="collection">
+
+            <% for(let prod of allProds) { %>
+            <div class="product">
+              <a class="product__image" href="#"></a>
+              <div class="product__name">
+                <p>
+                  <a href="#"><%= prod.name %></a>
+                </p>
+              </div>
+              <div class="product__price">
+                <p>$<%= prod.price %></p>
+              </div>
+              <form method="POST" action="/product-approved">
+                <button class="approve-button" type="submit">Approve</button>
+                <input type="hidden" name="productId" value="<%= prod._id %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              </form>
+              <form method="POST" action="/deny-product">
+                <button class="deny-button" type="submit">Deny</button>
+                <input type="hidden" name="productId" value="<%= prod._id %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              </form>
+            </div>
+        <% } %>
+            
+        </div>
+    <% } else { %>
+        <h1 class="approve-products-error">Currently, there are no products awaiting approval!</h1>
+    <% } %>
+
+</body>
+
+<%- include('../includes/end.ejs') %>

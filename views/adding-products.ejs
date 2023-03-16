@@ -1,0 +1,35 @@
+<%- include('./includes/header.ejs') %>
+
+<body>
+    <%- include('./includes/navbar.ejs') %>
+    <div class="login-box">
+        <h2>Give us information about your item!</h2>
+        <% if (errMessage) { %>
+            <p style="color: white; text-align: center; margin-bottom: 5px;"><%= errMessage %></p>
+        <% } %>
+        <form name="productForm" method="POST" action="/add-product">
+          <div class="user-box">
+            <input type="text" name="name" required="true">
+            <label>Product Name:</label>
+          </div>
+          <div class="user-box">
+            <input type="number" name="price" step="0.01" required="true">
+            <label>Product Price:</label>
+          </div>
+          <div class="user-box">
+            <input type="text" name="description" required="true">
+            <label>Product Description:</label>
+          </div>
+          <button type="submit">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Sell Your Product!
+          </button>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        </form>
+      </div>
+</body>
+
+<%- include('./includes/end.ejs') %>
