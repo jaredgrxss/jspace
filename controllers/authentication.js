@@ -49,9 +49,8 @@ exports.postLogin = (req, res, next) => {
                 req.flash('error', 'Sorry, your credentials were invalid');
                 return res.redirect('/login');
             }
-            if(usr.isAdmin == true) {
-                req.session.isAdmin = true;
-            }
+            
+            req.session.isAdmin = usr.isAdmin;
             req.session.isLoggedIn = true;
             req.session.user = usr;
             req.session.save(err => {
