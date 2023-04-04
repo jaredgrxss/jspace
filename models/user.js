@@ -23,6 +23,11 @@ const userSchema = new Schema({
         required: true
     },
 
+    rating: {
+        type: Number,
+        required: true
+    },
+
     cart: {
         items: [
             {

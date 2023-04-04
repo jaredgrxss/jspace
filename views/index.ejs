@@ -16,7 +16,12 @@
     <div class="main-text-slogan">
         <h1 class="main-text">We make shopping simple...</h1>
         <h2 class="main-slogan">seriously, simple</h2>
-        <a href="/login"><button class="main-text-button">Get Started</button></a>
+        <% if (!isAuth) { %>
+            <a href="/login"><button class="main-text-button">Get Started</button></a>
+        <% } else { %>
+            <a href="/add-product"><button class="main-text-button">Get Started</button></a>
+        <% } %>
+
     </div>
     
     

@@ -15,5 +15,10 @@ router.get('/all-products', isAuth, marketController.getAllProducts);
 router.get('/product-detail/:prodId', isAuth, marketController.productDetail);
 
 
+router.get('/profile/:UID', isAuth, marketController.getProfile);
+
+router.get('/edit-product/:UID/:prodId', isAuth, marketController.getEditProduct);
+
+router.post('/delete-product', isAuth, marketController.deleteProduct);
 // export our routes
 module.exports = router;

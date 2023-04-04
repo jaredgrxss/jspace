@@ -1,0 +1,46 @@
+<%- include('./includes/header.ejs') %>
+
+<body>
+    <%- include('./includes/navbar.ejs') %>
+    <% if(session_usr != usr_id)  { %>
+        <h1 class="welcome-message" >Welcome to  <span class="profile-username"><%= user.username %>'s </span> Page!</h1>
+
+    <% } else { %>
+        <h1 class="welcome-message" > Welcome <span class="profile-username"><%= user.username %></span> to your profile! </h1>
+        <h3 class="revenue-message"> Your total revenue while being a member of JPSACE is: </h3>
+        <h4 class="revenue-display"> $<%= revenue %> </h4>
+
+        <h1 class="edit-message"> Edit your <span class="profile-username">non-purchased</span> products here: </h1>
+        <% if (not_purchased_prods) { %>
+            <div class="collection">
+                <% for(let prod of not_purchased_prods) { %>
+                <div class="product">
+                    <img class="product__image" src="/<%= prod.imageUrl1 %>" alt=""> <!--</a> -->
+                    <div class="product__name">
+                    <p>
+                        <a href="/product-detail/<%= prod._id %>"><%= prod.name %></a>
+                    </p>
+                    </div>
+                    <div class="product__price">
+                    <p>$<%= prod.price %></p>
+                    </div>
+                    <a href="/edit-product/<%= user._id %>/<%= prod._id %>">
+                    <button class="approve-button">Edit Product</button>
+                    </a>
+                    
+                    <form action="/delete-product" method="POST">
+                        <button class="approve-button">Delete Product</button>
+                        <input type="hidden" name="UID" value="<%= user._id %>">
+                        <input type="hidden" name="prodId" value="<%= prod._id %>">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    </form>
+                </div>
+                <% } %>
+            </div>
+        <% } else { %>
+            <h1 class="approve-products-error">No editable products found!</h1>
+        <% } %>
+    <% } %>
+</body>
+
+<%- include('./includes/end.ejs') %>

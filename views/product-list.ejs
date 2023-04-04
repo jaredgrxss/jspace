@@ -7,10 +7,10 @@
  
             <% for(let prod of allProds) { %>
             <div class="product">
-              <a class="product__image" href="#"></a>
+              <!-- <a href="#">--> <img class="product__image" src="<%= prod.imageUrl1 %>" alt=""> <!--</a> -->
               <div class="product__name">
                 <p>
-                  <a href="#"><%= prod.name %></a>
+                  <a href="/product-detail/<%= prod._id %>"><%= prod.name %></a>
                 </p>
               </div>
               <div class="product__price">
@@ -29,7 +29,7 @@
             
         </div>
     <% } else { %>
-        <h1 class="approve-products-error">Currently, there are no products up for sale!</h1>
+        <h1 class="approve-products-error">Currently, there are no products up for sale that you are eligible to buy!</h1>
     <% } %>
 </body>
 

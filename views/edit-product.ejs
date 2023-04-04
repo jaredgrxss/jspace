@@ -1,0 +1,51 @@
+<%- include('./includes/header.ejs') %>
+
+<body>
+    <%- include('./includes/navbar.ejs') %>
+    <div class="product-box">
+        <h2>Please provide the updated information about your item!</h2>
+        <% if (errMessage) { %>
+            <p style="color: white; text-align: center; margin-bottom: 5px;"><%= errMessage %></p>
+        <% } %>
+        <form name="productForm" method="POST" action="/add-product" enctype="multipart/form-data">
+          <div class="user-box">
+            <input value="<% if (editingProduct) { %> <%= product.name %> <% } %>" type="text" name="name" required="true">
+            <label>Product Name:</label>
+          </div>
+          <div class="user-box">
+            <input value="<% if (editingProduct) { %> <%= product.price %> <% } %>" type="number" name="price" step="0.01" required="true">
+            <label>Product Price:</label>
+          </div>
+          <div class="user-box">
+            <input value="<% if (editingProduct) { %> <%= product.description %> <% } %>" type="text" name="description" required="true">
+            <label>Product Description:</label>
+          </div>
+          <div class="user-box">
+            <label for="image1">First Image:</label>
+            <input class="image-form" type="file" name="images" required="true">
+          </div>
+          <div class="user-box">
+            <input class="image-form" type="file" name="images" required="true">
+            <label>Second Image:</label>
+          </div>
+          <div class="user-box">
+            <input class="image-form" type="file" name="images" required="true">
+            <label>Third Image:</label>
+          </div>
+          <div class="user-box">
+            <input class="image-form" type="file" name="images" required="true">
+            <label>Fourth Image:</label>
+          </div>
+          <button type="submit">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            Sell Your Product!
+          </button>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        </form>
+      </div>
+</body>
+
+<%- include('./includes/end.ejs') %>

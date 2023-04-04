@@ -13,7 +13,11 @@ exports.getApproveProducts = (req, res, next) => {
         }
         res.render('admin/approve-product', context);
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
 };
 
 
@@ -23,7 +27,11 @@ exports.denyProduct = (req, res, next) => {
     .then(result => {
         res.redirect('/approve-products');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
 };
 
 exports.productApproved = (req, res, next) => {
@@ -36,6 +44,10 @@ exports.productApproved = (req, res, next) => {
             res.redirect('/approve-products');
         })
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
 
 }

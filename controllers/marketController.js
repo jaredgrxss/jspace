@@ -1,4 +1,6 @@
 const Product = require('../models/product');
+const User = require('../models/user');
+const fileHelper = require('../util/file');
 
 exports.getIndex = (req,res,next) => {
     let err_message = req.flash('error');
@@ -14,6 +16,7 @@ exports.getIndex = (req,res,next) => {
     res.render('index',context);
 };
 
+
 exports.getAddProduct = (req, res, next) => {
     let err_message = req.flash('error');
     if (err_message.length > 0) {
@@ -24,9 +27,11 @@ exports.getAddProduct = (req, res, next) => {
     context = {
         page: 'Sellpage',
         errMessage: err_message,
+        editingProduct: false,
     }
     res.render('adding-products', context);
 };
+
 
 exports.postAddProduct = (req, res, next) => {
     let err_message = req.flash('error');
@@ -39,16 +44,24 @@ exports.postAddProduct = (req, res, next) => {
         page: 'Sellpage',
         errMessage: err_message,
     }
-
     const prod_name = req.body.name;
     const prod_price = req.body.price;
     const prod_description = req.body.description;
-    Product.find({name: prod_name})
+    const images = req.files;
+    if(images.length != 4) {
+        req.flash('Sorry, you either did not upload enough images or JPG/PNG images');
+        return res.redirect('/add-product');
+    }
+    Product.find({name: prod_name, isPurchased: false})
     .then(prod => {
         if(prod.length > 0){
             req.flash('error', 'Sorry, there already exist a product with this name');
             return res.redirect('/add-product');
         }
+        const image1 = req.files[0];
+        const image2 = req.files[1];
+        const image3 = req.files[2];
+        const image4 = req.files[3];
 
         const product = new Product({
             name: prod_name,
@@ -56,13 +69,22 @@ exports.postAddProduct = (req, res, next) => {
             description: prod_description,
             UID: req.session.user._id,
             isApproved: false,
+            imageUrl1: image1.path.replace('\\','/'),
+            imageUrl2: image2.path.replace('\\','/'),
+            imageUrl3: image3.path.replace('\\','/'),
+            imageUrl4: image4.path.replace('\\','/'),
+            isPurchased: false,
         });
         product.save()
         .then(result => {
             res.redirect('/');
         })
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
        
     
 };
@@ -70,34 +92,39 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getAllProducts = (req, res, next) => {
 
-    Product.find({isApproved: true})
+    Product.find({isApproved: true, isPurchased: false})
     .then(products => { 
         let found_prods = []
         if(products.length == 0) {
             found_prods = undefined;
         } else {
             for(let prod of products) {
-                console.log(prod);
-                if(prod.UID.toString() === req.session.user._id.toString()) 
-                    continue;
-                else {
+                // if(prod.UID.toString() === req.session.user._id.toString()) 
+                //     continue;
+                // else {
                     found_prods.push(prod);
-                }
+                // }
             }
         }
+
         context = {
             page: 'Productpage',
             allProds: found_prods,
         }
         res.render('product-list', context);
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
 };
 
 
 exports.productDetail = (req, res, next) => {
     const prodId = req.params.prodId;
     Product.findOne({_id: prodId})
+    .populate('UID')
     .then(product => {
         if(!product){
             return res.redirect('product-list');
@@ -109,5 +136,120 @@ exports.productDetail = (req, res, next) => {
         res.render('product-detail',context);
 
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
+};
+
+exports.getProfile = (req, res, next) => {
+    const UID = req.params.UID;
+    User.findOne({_id: UID})
+    .then(usr => {
+        if(!usr) {
+            return res.redirect('/');
+        }
+        const session_id = req.session.user._id.toString();
+        const user_id = usr._id.toString();
+        if (session_id !== user_id) {
+            context = {
+                page: 'Profilepage',
+                session_usr: '123',
+                usr_id: '456',
+                user: usr,
+            }
+            return res.render('profile',context);
+        }
+
+        Product.find({UID: usr._id})
+        .then(products => {
+            let not_purchased = [];
+            let purchased = [];
+            let revenue = 0;
+            for (let prod of products) {
+                if (prod.isPurchased) {
+                    revenue += prod.price;
+                    purchased.push(prod);
+                } else {
+                    not_purchased.push(prod);
+                }
+            }
+            context = {
+                page: 'Profilepage',
+                session_usr: '111',
+                usr_id: '111',
+                user: usr,
+                purchased_prods : purchased,
+                not_purchased_prods : not_purchased,
+                revenue: revenue,
+            }
+            res.render('profile', context)
+        });
+    })
+    .catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    })
+};
+
+
+exports.getEditProduct = (req, res, next) => {
+    const prodId = req.params.prodId;
+    const UID = req.params.UID;
+    let err_message = req.flash('error');
+    if (err_message.length > 0) {
+        err_message = err_message[0];
+    } else {
+        err_message = null;
+    }
+    Product.findById(prodId)
+    .then(product => {
+        if(!product) {
+            return res.redirect('/');
+        }
+        
+        console.log(product.UID.toString());
+        console.log(UID);
+
+        if(UID != product.UID.toString()) {
+            return res.redirect('/');
+        }
+
+        context = {
+            page : 'Profilepage',
+            product: product,
+            editingProduct: true,
+            errMessage: err_message,
+        }
+        res.render('edit-product', context);
+    })
+    .catch(err => {
+        return next(err);
+    })
+};
+
+exports.deleteProduct = (req,res,next) => {
+    const prodId = req.body.prodId;
+    const UID = req.body.UID
+    Product.findById(prodId)
+    .then(product => {
+        if(!product) {
+            return next(new Error('Product not found'));
+        }
+        fileHelper.deleteFile(product.imageUrl1);
+        fileHelper.deleteFile(product.imageUrl2);
+        fileHelper.deleteFile(product.imageUrl3);
+        fileHelper.deleteFile(product.imageUrl4);
+        return Product.deleteOne({_id: prodId, UID: req.session.user._id})
+    })
+    .then(result => {
+        res.redirect('/');
+    })
+    .catch(err  => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
 }

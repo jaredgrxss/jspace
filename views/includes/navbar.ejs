@@ -10,7 +10,8 @@
                 <% if (isAdmin) { %>
                     <a class="<%= page === 'Adminpage' ? 'active-link' : '' %>" href="/approve-products">Approve Products</a>
                 <% } %>
-                <a class="<%= page === 'Signuppage' ? 'active-link' : '' %>" href="/signup">Profile</a>
+                <a class="<%= page === 'uhhhh' ? 'active-link' : '' %>" href="/profile/<%= user._id %>">My Cart</a>
+                <a class="<%= page === 'Profilepage' ? 'active-link' : '' %>" href="/profile/<%= user._id %>">Profile</a>
                 <a class="<%= page === 'Aboutpage' ? 'active-link' : '' %>" href="/logout">Logout</a>
             <% } else { %>
                 <a class="<%= page === 'Loginpage' ? 'active-link' : '' %>" href="/login">Login</a>
@@ -31,7 +32,8 @@
             <% if (isAdmin) { %>
             <a class="<%= page === 'Adminpage' ? 'active-link' : '' %>" href="/approve-products">Approve Products</a>
             <% } %>
-            <a class="<%= page === 'Signuppage' ? 'active-link' : '' %>" href="/signup">Profile</a>
+            <a class="<%= page === 'uhhhh' ? 'active-link' : '' %>" href="/profile/<%= user._id %>">My Cart</a>
+            <a class="<%= page === 'Profilepage' ? 'active-link' : '' %>" href="/signup">Profile</a>
             <a class="<%= page === 'Aboutpage' ? 'active-link' : '' %>" href="/logout">Logout</a>
         <% } else { %>
             <a class="<%= page === 'Aboutpage' ? 'active-link' : '' %>" href="/login">Login</a>

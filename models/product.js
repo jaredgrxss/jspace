@@ -18,6 +18,26 @@ const productSchema = new Schema({
         required: true
     },
 
+    imageUrl1: {
+        type: String,
+        required: true,
+    },
+
+    imageUrl2: {
+        type: String,
+        required: true,
+    },
+
+    imageUrl3: {
+        type: String,
+        required: true
+    },
+
+    imageUrl4: {
+        type: String,
+        required: true
+    },
+
     UID: {
         type: Schema.Types.ObjectId,
         ref: 'User',
@@ -25,6 +45,11 @@ const productSchema = new Schema({
     },
 
     isApproved: {
+        type: Boolean,
+        required: true,
+    },
+    
+    isPurchased: {
         type: Boolean,
         required: true,
     }
