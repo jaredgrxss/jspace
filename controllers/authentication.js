@@ -93,7 +93,6 @@ exports.postSignup = (req, res, next) => {
                 email: email,
                 password: hashedPass,
                 isAdmin: false,
-                rating: 5,
                 cart: { items: [] }
             });
             return created_user.save();

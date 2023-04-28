@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const user = require('../models/user');
 const User = require('../models/user');
 const fileHelper = require('../util/file');
 
@@ -34,6 +35,7 @@ exports.getAddProduct = (req, res, next) => {
 
 
 exports.postAddProduct = (req, res, next) => {
+    const UID = req.body.UID;
     let err_message = req.flash('error');
     if (err_message.length > 0) {
         err_message = err_message[0];
@@ -77,7 +79,8 @@ exports.postAddProduct = (req, res, next) => {
         });
         product.save()
         .then(result => {
-            res.redirect('/');
+            const URL = '/profile/' + UID;
+            return res.redirect(URL);
         })
     })
     .catch(err => {
@@ -91,7 +94,6 @@ exports.postAddProduct = (req, res, next) => {
 
 
 exports.getAllProducts = (req, res, next) => {
-
     Product.find({isApproved: true, isPurchased: false})
     .then(products => { 
         let found_prods = []
@@ -220,6 +222,7 @@ exports.getEditProduct = (req, res, next) => {
         context = {
             page : 'Profilepage',
             product: product,
+            UID : UID,
             editingProduct: true,
             errMessage: err_message,
         }
@@ -228,6 +231,51 @@ exports.getEditProduct = (req, res, next) => {
     .catch(err => {
         return next(err);
     })
+};
+
+exports.postEditProduct = (req, res, next) => {
+    const UID = req.body.UID;
+    const prodId = req.body.prodId;
+    const name = req.body.name;
+    const images = req.files;
+    const price = req.body.price;
+    const description = req.body.description;
+    Product.findById(prodId)
+    .then(product => {
+        product.name = name;
+        if (price) {
+            product.price = price;
+        }
+        product.description = description;
+        const image1 = req.files[0];
+        const image2 = req.files[1];
+        const image3 = req.files[2];
+        const image4 = req.files[3];
+        if(image1){
+            fileHelper.deleteFile(product.imageUrl1);
+            product.imageUrl1 = image1.path.replace('\\','/');
+        }
+        if(image2){
+            fileHelper.deleteFile(product.imageUrl2);
+            product.imageUrl2 = image2.path.replace('\\','/');
+        }
+        if(image3){
+            fileHelper.deleteFile(product.imageUrl3);
+            product.imageUrl3 = image3.path.replace('\\','/');
+        }
+        if(image4){
+            fileHelper.deleteFile(product.imageUrl4);
+            product.imageUrl4 = image4.path.replace('\\','/');
+        }
+        return product.save()
+        .then(result => {
+            const URL = '/profile/' + UID;
+            res.redirect(URL);
+        });
+    })
+    .catch(err => {
+        return next(err);
+    });
 };
 
 exports.deleteProduct = (req,res,next) => {
@@ -245,7 +293,8 @@ exports.deleteProduct = (req,res,next) => {
         return Product.deleteOne({_id: prodId, UID: req.session.user._id})
     })
     .then(result => {
-        res.redirect('/');
+        const url = '/profile/' + UID;
+        res.redirect(url);
     })
     .catch(err  => {
         const error = new Error(err);
@@ -253,3 +302,46 @@ exports.deleteProduct = (req,res,next) => {
         return next(error);
     });
 }
+
+exports.getUserCart = (req, res, next) => {
+    User.findById(req.session.user._id)
+    .populate('cart.items.productId')
+    .then(usr => {
+        const products = usr.cart.items;
+        console.log(products);
+        context = { 
+            page : '/cart',
+            products : products
+        }
+        res.render('cart', context);
+    })
+    .catch(err => {
+        return next(err);
+    })
+
+}
+
+exports.postUserCart = (req, res, next) => {
+    const prodId = req.params.prodId;
+    Product.findById(prodId)
+    .then(product => {
+        if(!product){
+            return next(error);
+        }
+        return User.findById(req.session.user._id)
+            .then(usr => {
+                usr.addToCart(product);
+            })
+    })
+    .then(result => {
+        return res.redirect('/cart');
+    })
+    .catch(err => {
+        return next(err);
+    });
+};
+
+exports.deleteFromUserCart = (req, res, next) => {
+    
+}
+

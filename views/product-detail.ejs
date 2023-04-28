@@ -25,7 +25,13 @@
                 <p style="color: white"><a class="back-btn" href="/all-products"> Back </a> / Products</p>
                 <h1 style="color: white"><%= product.name %> by <a href="/profile/<%=product.UID._id%>" class="profile-btn"><%= product.UID.username %> </a></h1>
                 <h4 style="color: white">$<%= product.price %></h4>
-                <a href="#" class="detail-atc-btn">Add to Cart</a>
+                <% if (isAuth) { %>
+                    <form method="POST" action="/add-to-cart/<%= product._id %>">
+                      <button class="detail-atc-btn" style="cursor: pointer;" type="submit">Add to Cart</button>
+                      <input type="hidden" name="productId" value="<%= product._id %>">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    </form>
+                <% } %>
                 <h3 style="color: white">Product Details:<i class="fa fa-indent"></i></h3>
                 <br>
                 <p style="color: white"><%= product.description %>

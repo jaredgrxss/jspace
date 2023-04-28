@@ -4,13 +4,13 @@
         <div class="menu">
             <a class="<%= page === 'Homepage' ? 'active-link' : '' %>" href="/">Home</a>
             <a class="<%= page === 'Aboutpage' ? 'active-link' : '' %>" href="#">About</a>
+            <a class="<%= page === 'Productpage' ? 'active-link' : '' %>" href="/all-products">Products</a>
             <% if(isAuth) { %>
-                <a class="<%= page === 'Productpage' ? 'active-link' : '' %>" href="/all-products">Products</a>
                 <a class="<%= page === 'Sellpage' ? 'active-link' : '' %>" href="/add-product">Sell</a>
                 <% if (isAdmin) { %>
                     <a class="<%= page === 'Adminpage' ? 'active-link' : '' %>" href="/approve-products">Approve Products</a>
                 <% } %>
-                <a class="<%= page === 'uhhhh' ? 'active-link' : '' %>" href="/profile/<%= user._id %>">My Cart</a>
+                <a class="<%= page === 'cart' ? 'active-link' : '' %>" href="/cart">My Cart</a>
                 <a class="<%= page === 'Profilepage' ? 'active-link' : '' %>" href="/profile/<%= user._id %>">Profile</a>
                 <a class="<%= page === 'Aboutpage' ? 'active-link' : '' %>" href="/logout">Logout</a>
             <% } else { %>
@@ -26,13 +26,13 @@
     <div class="mobile-menu">
         <a class="<%= page === 'Homepage' ? 'active-link' : '' %>" href="/">Home</a>
         <a class="<%= page === 'Aboutpage' ? 'active-link' : '' %>" href="#">About</a>
+        <a class="<%= page === 'Productpage' ? 'active-link' : '' %>" href="/all-products">Products</a>
         <% if (isAuth) { %>
-            <a class="<%= page === 'Productpage' ? 'active-link' : '' %>" href="/all-products">Products</a>
             <a class="<%= page === 'Sellpage' ? 'active-link' : '' %>" href="/add-product">Sell</a>
             <% if (isAdmin) { %>
             <a class="<%= page === 'Adminpage' ? 'active-link' : '' %>" href="/approve-products">Approve Products</a>
             <% } %>
-            <a class="<%= page === 'uhhhh' ? 'active-link' : '' %>" href="/profile/<%= user._id %>">My Cart</a>
+            <a class="<%= page === 'cart' ? 'active-link' : '' %>" href="/profile/<%= user._id %>">My Cart</a>
             <a class="<%= page === 'Profilepage' ? 'active-link' : '' %>" href="/signup">Profile</a>
             <a class="<%= page === 'Aboutpage' ? 'active-link' : '' %>" href="/logout">Logout</a>
         <% } else { %>

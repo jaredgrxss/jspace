@@ -10,7 +10,7 @@
         <h3 class="revenue-message"> Your total revenue while being a member of JPSACE is: </h3>
         <h4 class="revenue-display"> $<%= revenue %> </h4>
 
-        <h1 class="edit-message"> Edit your <span class="profile-username">non-purchased</span> products here: </h1>
+        <h1 class="edit-message"> Modify your <span class="profile-username">non-purchased</span> products here: </h1>
         <% if (not_purchased_prods) { %>
             <div class="collection">
                 <% for(let prod of not_purchased_prods) { %>
@@ -39,6 +39,9 @@
             </div>
         <% } else { %>
             <h1 class="approve-products-error">No editable products found!</h1>
+        <% } %>
+        <% if (purchased_prods.length > 0) { %>
+            <h1 class="edit-message"> Below you can find <span class="profile-username">purchased</span> items you have posted: </h1>
         <% } %>
     <% } %>
 </body>

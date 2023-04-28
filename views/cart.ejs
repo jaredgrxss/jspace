@@ -1,0 +1,30 @@
+<%- include('./includes/header.ejs') %>
+
+<body>
+    <%- include('./includes/navbar.ejs') %>
+    <% if (products) { %>
+        <h1 class="edit-message"> Items in your cart: <span class="profile-username"><%= user.username %></span></h1>
+
+        <div class="collection">
+            <% for(let prod of products) { %>
+            <div class="product">
+              <!-- <a href="#">--> <img class="product__image" src="/<%= prod.productId.imageUrl1 %>" alt=""> <!--</a> -->
+              <div class="product__name" style="text-align: center;">
+                <p>
+                  <a href="/product-detail/<%= prod.productId._id %>"><%= prod.productId.name %></a>
+                </p>
+              </div>
+              <form method="POST" action="/deleteFromCart" >
+                <button class="detail-atc-btn" style="cursor: pointer; margin-top: 1rem; margin-left: 1rem;" type="submit">Delete From Cart</button>
+                <input type="hidden" name="productId" value="<%= prod.productId._id %>">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            </form>
+            </div>
+        <% } %>
+        </div>
+    <% } else { %>
+        <h1 class="approve-products-error">Currently, you have no items in your cart</h1>
+    <% } %>
+</body>
+
+<%- include('./includes/end.ejs') %>
