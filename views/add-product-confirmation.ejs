@@ -1,0 +1,9 @@
+<%- include('./includes/header.ejs') %>
+
+<body>
+    <%- include('./includes/navbar.ejs') %>
+    <h1 class="success-button-page"> Congrats! Your product is now being reviewed by our admin team!</h1>
+    <a href="/profile/<%= user._id %>" style="text-decoration: none;"><button  class="detail-atc-btn" style="text-align: center; display: block; margin-left: 43%; margin-right: 30%; cursor: pointer;">View Your Profile</button></a>
+</body>
+
+<%- include('./includes/end.ejs') %>

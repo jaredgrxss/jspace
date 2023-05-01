@@ -1,0 +1,39 @@
+<%- include('./includes/header.ejs') %>
+
+<body>
+    <%- include('./includes/navbar.ejs') %>
+    <% if (products.length > 0) { %>
+        <h1 class="edit-message" style="margin-bottom: 20px;"> Review Items in Your Order Below: <span class="profile-username"><%= user.username %></span></h1>
+        <ul class="cart__item-list">
+            <% products.forEach(product => { %>
+                <li class="cart__item" style="margin-bottom: 1em;">
+                    <a class="cart-hover" href="/product-detail/<%= product.productId._id %>"><h1><%= product.productId.name %> - $<%= product.productId.price %></h1></a>
+                    <form action="/deleteFromCart" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" value="<%= product.productId._id %>" name="productId">
+                    </form>
+                </li>
+            <% }); %>
+        </ul>
+        <div style="text-align: center;">
+            <h2 style="color: white;">Total Price: $<%= total %></h2>
+        </div>
+        <div>
+            <button id="order-btn" class="detail-atc-btn" style="text-align: center; display: block; margin-left: 43%; margin-right: 30%; cursor: pointer;">Order Now!</button>
+            <script src="https://js.stripe.com/v3/"></script>
+            <script>
+                var stripe = Stripe('pk_live_51N2Q0JBQW4elP45opBEDiw2UC1vphHfzusDIrYunlCwe4KYkWx1vjskhupzZETM6fZDlc42p30MO5UUkAHAEjTA500RNNAYs7y')
+                var orderBtn = document.getElementById('order-btn');
+                orderBtn.addEventListener('click', function(){
+                    stripe.redirectToCheckout({
+                        sessionId : '<%= sessionId %>'
+                    })
+                })
+            </script>
+        </div>
+    <% } else { %>
+        <h1 class="approve-products-error">Currently, you have no items in your cart</h1>
+    <% } %>
+</body>
+
+<%- include('./includes/end.ejs') %>

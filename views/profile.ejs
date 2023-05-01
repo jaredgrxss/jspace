@@ -7,7 +7,7 @@
 
     <% } else { %>
         <h1 class="welcome-message" > Welcome <span class="profile-username"><%= user.username %></span> to your profile! </h1>
-        <h3 class="revenue-message"> Your total revenue while being a member of JPSACE is: </h3>
+        <h3 class="revenue-message"> Your total <span class="profile-username">revenue</span> while being a member of JPSACE is: </h3>
         <h4 class="revenue-display"> $<%= revenue %> </h4>
 
         <h1 class="edit-message"> Modify your <span class="profile-username">non-purchased</span> products here: </h1>
@@ -17,8 +17,8 @@
                 <div class="product">
                     <img class="product__image" src="/<%= prod.imageUrl1 %>" alt=""> <!--</a> -->
                     <div class="product__name">
-                    <p>
-                        <a href="/product-detail/<%= prod._id %>"><%= prod.name %></a>
+                    <p style="color: white;">
+                        <%= prod.name %>
                     </p>
                     </div>
                     <div class="product__price">
@@ -40,8 +40,26 @@
         <% } else { %>
             <h1 class="approve-products-error">No editable products found!</h1>
         <% } %>
+            <hr>
         <% if (purchased_prods.length > 0) { %>
             <h1 class="edit-message"> Below you can find <span class="profile-username">purchased</span> items you have posted: </h1>
+            <div class="collection">
+                <% for(let prod of purchased_prods) { %>
+                <div class="product">
+                    <img class="product__image" src="/<%= prod.imageUrl1 %>" alt=""> <!--</a> -->
+                    <div class="product__name">
+                    <p style="color: white;">
+                        <%= prod.name %>
+                    </p>
+                    </div>
+                    <div class="product__price">
+                    <p>$<%= prod.price %></p>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        <% } else { %>
+            <h1 class="edit-message">Currently, you have no <span class="profile-username">purchased products</span> on JSPACE</h1>
         <% } %>
     <% } %>
 </body>

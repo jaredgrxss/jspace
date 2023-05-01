@@ -344,9 +344,9 @@ nav h1:hover {
 
 /* MAIN PAGE TEXT AND LOGO */
 .main-text-slogan {
-	margin-left: 5%;
-	margin-top: 10%;
-	margin-right: 41%;
+	margin-left: 20%;
+	margin-top: 20%;
+	margin-right: 20%;
 	text-align: center;
 }
 
@@ -453,6 +453,7 @@ nav h1:hover {
 }
 
 .approve-button {
+	border: none;
 	padding: 5px;
 	width: 100%;
 	cursor: pointer;
@@ -469,6 +470,7 @@ nav h1:hover {
 }
 
 .deny-button {
+	border: none;
 	width: 100%;
 	padding: 5px;
 	cursor: pointer;
@@ -551,6 +553,7 @@ nav h1:hover {
 }
 
 .detail-atc-btn {
+	border: none;
 	display: inline-block;
 	background-color:#7f5af0;
 	text-decoration: none;
@@ -816,5 +819,102 @@ nav h1:hover {
 	margin-top: 3%;
 	font-style: italic;
 }
+
+/* ORDER AND SUCCESS PAGE STYLES */
+.success-button-page{
+	color: white; 
+	text-align: center; 
+	font-size: 2rem; 
+	margin-top: 20%; 
+	margin-left: 20%; 
+	margin-right: 20%; 
+	margin-bottom: 5%;
+}
+
+.orders {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+  }
+  
+  .orders__item h1 {
+	  margin: 0;
+	  font-size: 1rem;
+  }
+  
+  .orders__item {
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+	padding: 1rem;
+	margin-bottom: 1rem;
+  }
+  
+  .orders__products {
+	  list-style: none;
+	  margin: 0;
+	  padding: 0;
+  }
+  
+  .orders__products-item {
+	  margin: 0.5rem 0;
+	  padding: 0.5rem;
+	  border: 1px solid #7f5af0;
+	  color: white;
+  }
+
+/* CART STYLING */
+.cart__item-list {
+list-style: none;
+margin: 0;
+padding: 0;
+margin: auto;
+width: 40rem;
+max-width: 90%;
+}
+
+.cart__item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 1rem;
+
+box-shadow: 0 2px 8px rgb(127,127,236);
+margin-bottom: 1rem;
+}
+
+.cart__item h1,
+.cart__item h2 {
+margin-right: 1rem;
+font-size: 1.2rem;
+margin: 0;
+}
+
+.cart-hover {
+	text-decoration: none;
+	color: white;
+}
+.cart-hover:hover {
+	color: #7f5af0;
+}
+
+.cart-delete-button {
+	background-color: #7f5af0;
+	color: white;
+	padding: 10px;
+	border-radius: 15px;
+	border: none;
+	cursor: pointer;
+}
+
+.cart-delete-button:hover {
+	background-color: rgb(127, 127, 236);
+	color: white;
+	padding: 10px;
+	border-radius: 15px;
+	border: none;
+	cursor: pointer;
+}
+  
+  
+  
   
   

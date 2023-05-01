@@ -55,12 +55,17 @@ userSchema.methods.addToCart = function(product) {
     return this.save();
 };
 
-userSchema.methods.deleteItemsFromCart = function(prodId) {
+userSchema.methods.deleteItemFromCart = function(prodId) {
     const updated_cart = this.cart.items.filter(item => {
         return item.productId.toString() !== prodId.toString();
     });
-    this.cart.itmes = updated_cart;
+    this.cart.items = updated_cart;
     return this.save();
 };
+
+userSchema.methods.clearCart = function(){
+    this.cart.items = [];
+    return this.save();
+}
 
 module.exports = mongoose.model('User', userSchema);

@@ -2,25 +2,22 @@
 
 <body>
     <%- include('./includes/navbar.ejs') %>
-    <% if (products) { %>
-        <h1 class="edit-message"> Items in your cart: <span class="profile-username"><%= user.username %></span></h1>
-
-        <div class="collection">
-            <% for(let prod of products) { %>
-            <div class="product">
-              <!-- <a href="#">--> <img class="product__image" src="/<%= prod.productId.imageUrl1 %>" alt=""> <!--</a> -->
-              <div class="product__name" style="text-align: center;">
-                <p>
-                  <a href="/product-detail/<%= prod.productId._id %>"><%= prod.productId.name %></a>
-                </p>
-              </div>
-              <form method="POST" action="/deleteFromCart" >
-                <button class="detail-atc-btn" style="cursor: pointer; margin-top: 1rem; margin-left: 1rem;" type="submit">Delete From Cart</button>
-                <input type="hidden" name="productId" value="<%= prod.productId._id %>">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            </form>
-            </div>
-        <% } %>
+    <% if (products.length > 0) { %>
+        <h1 class="edit-message" style="margin-bottom: 15px;"> Items in your cart: <span class="profile-username"><%= user.username %></span></h1>
+        <ul class="cart__item-list">
+            <% products.forEach(product => { %>
+                <li class="cart__item" style="margin-bottom: 1em;">
+                    <a class="cart-hover" href="/product-detail/<%= product.productId._id %>"><h1><%= product.productId.name %> - $<%= product.productId.price %></h1></a>
+                    <form action="/deleteFromCart" method="POST">
+                        <button class="cart-delete-button" type="submit">Delete</button>
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" value="<%= product.productId._id %>" name="productId">
+                    </form>
+                </li>
+            <% }); %>
+        </ul>
+        <div>
+        <a href="/checkout" class="detail-atc-btn" style="text-align: center; display: block; margin-left: 30%; margin-right: 30%;">Order Now!</a>
         </div>
     <% } else { %>
         <h1 class="approve-products-error">Currently, you have no items in your cart</h1>

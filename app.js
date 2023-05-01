@@ -8,8 +8,13 @@ const MongoSessionStorage = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+const helmet = require('helmet');
+const compression = require('compression');
 
-MONGODB_URI = 'mongodb+srv://jaredgrxss:jared1939@seniorprojectdb.kfltxc7.mongodb.net/market?retryWrites=true&w=majority'
+
+
+MONGODB_URI = process.env.MONGODB_URL;
+
 //storing sessions on our db
 const store = new MongoSessionStorage({
     uri: MONGODB_URI,
@@ -49,6 +54,9 @@ const marketplace = require('./routes/market');
 const authentication = require('./routes/authentication');
 const admin = require('./routes/admin');
 const errorPage = require('./controllers/error');
+app.use(helmet());
+app.use(compression());
+
 
 //parser to parse all request bodies
 app.use(bodyparser.urlencoded({extended:false}));
@@ -93,7 +101,7 @@ app.use((error, req, res, next) => {
 mongoose.set('strictQuery', false);
 mongoose.connect(MONGODB_URI)
 .then(result => {
-    app.listen(8000);
+    app.listen(process.env.PORT || 8000);
 })
 .catch(err => {
     console.log(err)

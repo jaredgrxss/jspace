@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const fileHelper = require('../util/file');
 
 exports.getApproveProducts = (req, res, next) => {
     Product.find({isApproved: false})
@@ -23,7 +24,15 @@ exports.getApproveProducts = (req, res, next) => {
 
 exports.denyProduct = (req, res, next) => {
     const productId = req.body.productId;
-    Product.deleteOne({_id: productId})
+    Product.findById(productId)
+    .then(product => {
+        fileHelper.deleteFile(product.imageUrl1);
+        fileHelper.deleteFile(product.imageUrl2);
+        fileHelper.deleteFile(product.imageUrl3);
+        fileHelper.deleteFile(product.imageUrl4);
+        return product.delete();
+    })
+    //Product.deleteOne({_id: productId})
     .then(result => {
         res.redirect('/approve-products');
     })

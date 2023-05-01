@@ -1,7 +1,8 @@
 const Product = require('../models/product');
-const user = require('../models/user');
 const User = require('../models/user');
+const Order = require('../models/order');
 const fileHelper = require('../util/file');
+const stripe = require("stripe")(process.env.PRIVATE_STRIPE_KEY)
 
 exports.getIndex = (req,res,next) => {
     let err_message = req.flash('error');
@@ -50,8 +51,8 @@ exports.postAddProduct = (req, res, next) => {
     const prod_price = req.body.price;
     const prod_description = req.body.description;
     const images = req.files;
-    if(images.length != 4) {
-        req.flash('Sorry, you either did not upload enough images or JPG/PNG images');
+    if(images.length < 4) {
+        req.flash('error','Sorry, you either did not upload enough images or JPG/PNG images');
         return res.redirect('/add-product');
     }
     Product.find({name: prod_name, isPurchased: false})
@@ -64,7 +65,6 @@ exports.postAddProduct = (req, res, next) => {
         const image2 = req.files[1];
         const image3 = req.files[2];
         const image4 = req.files[3];
-
         const product = new Product({
             name: prod_name,
             price: prod_price,
@@ -79,17 +79,28 @@ exports.postAddProduct = (req, res, next) => {
         });
         product.save()
         .then(result => {
-            const URL = '/profile/' + UID;
-            return res.redirect(URL);
-        })
+            return res.redirect("/success");
+        });
     })
     .catch(err => {
         const error = new Error(err);
         error.httpStatusCode = 500;
         return next(error);
     });
-       
-    
+};
+
+exports.successPostProduct = (req, res, next) => {
+    let err_message = req.flash('error');
+    if (err_message.length > 0) {
+        err_message = err_message[0];
+    } else {
+        err_message = null;
+    }
+    context = {
+        page: 'homePage',
+        errMessage : err_message,
+    }
+    res.render('add-product-confirmation',context);
 };
 
 
@@ -108,7 +119,6 @@ exports.getAllProducts = (req, res, next) => {
                 // }
             }
         }
-
         context = {
             page: 'Productpage',
             allProds: found_prods,
@@ -267,6 +277,7 @@ exports.postEditProduct = (req, res, next) => {
             fileHelper.deleteFile(product.imageUrl4);
             product.imageUrl4 = image4.path.replace('\\','/');
         }
+        product.isApproved = false;
         return product.save()
         .then(result => {
             const URL = '/profile/' + UID;
@@ -308,9 +319,8 @@ exports.getUserCart = (req, res, next) => {
     .populate('cart.items.productId')
     .then(usr => {
         const products = usr.cart.items;
-        console.log(products);
         context = { 
-            page : '/cart',
+            page : 'cart',
             products : products
         }
         res.render('cart', context);
@@ -342,6 +352,114 @@ exports.postUserCart = (req, res, next) => {
 };
 
 exports.deleteFromUserCart = (req, res, next) => {
-    
+    const prodId = req.body.productId;
+    const UID = req.session.user._id;
+    User.findById(UID)
+    .then(usr => {
+        return usr.deleteItemFromCart(prodId);
+    })
+    .then(result => {
+        return res.redirect('/cart');
+    })
+    .catch(err => {
+        return next(err);
+    })
+};
+
+exports.getCheckout = (req, res, next) => {
+    let products;
+    let totalPrice = 0;
+    User.findById(req.session.user._id)
+    .populate('cart.items.productId')
+    .then(usr => {
+        products = usr.cart.items;
+        totalPrice = 0;
+        products.forEach(p => {
+            totalPrice += p.productId.price;
+        });
+        return stripe.checkout.sessions.create({
+            payment_method_types : ['card'],
+            mode: 'payment',
+            line_items: products.map(p => {
+                return {
+                    price_data : {
+                        unit_amount : p.productId.price * 100,
+                        currency : 'usd',
+                        product_data : {
+                            name: p.productId.name,
+                            description : p.productId.description,
+                        }
+                    },
+                    quantity: 1
+                };
+            }),
+            success_url : req.protocol + '://' + req.get('host') + '/checkout/success',
+            cancel_url : req.protocol + '://' + req.get('host') + '/checkout/cancel',
+        })
+    })
+    .then(session => {
+        context = { 
+            page : 'cart',
+            products : products,
+            total: totalPrice,
+            sessionId : session.id,
+        }
+        res.render('checkout', context);
+    })
+    .catch(err => {
+        return next(err);
+    })
+};
+
+
+exports.getCheckoutSuccess = (req, res, next) => {
+    User.findById(req.session.user._id)
+    .populate('cart.items.productId')
+    .then(usr => {
+        const products = usr.cart.items.map(i => {
+            return { product : {...i.productId._doc} };
+        });
+        products.forEach(p => {
+            console.log(p.product._id);
+            Product.findById(p.product._id)
+            .then(prod => {
+                prod.isPurchased = true;
+                prod.save();
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        });
+
+        const order = new Order({
+            orderProducts : products,
+            UID : req.session.user
+        });
+        order.save()
+        .then(result => {
+            return usr.clearCart();
+        })
+        .then(() => {
+            return res.redirect('/orders');
+        })
+    })
+    .catch(err => {
+        console.log(err);
+        return next(err);
+    })
+}
+
+exports.getUserOrders = (req, res, next) => {
+    Order.find({'UID' : req.session.user._id })
+    .then(orders => {
+        context = {
+            page : "orders",
+            orders : orders
+        }
+        res.render('orders',context)
+    })
+    .catch(err => {
+        return next(err);
+    })
 }
 
